@@ -14,5 +14,5 @@ bool is_number(const std::string& s);
 int machineDisplay_EU (xml_node<> * root_node );
 int machineDisplay_NA (xml_node<> * root_node );
 int findProductPrice(int productNumber,xml_node<> * root_node, float * price);
-
+int findProductQuantity(int productNumber,xml_node<> * root_node, int * quantity);
 #endif
