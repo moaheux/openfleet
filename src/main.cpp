@@ -2,28 +2,35 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <sstream>
 #include "../include/mock/hardware.h"
 #include "../include/error_variables.h"
 #include "../include/main.h"
-
-typedef std::vector<double> vec;
-typedef std::vector<vec> vec2;
+#include "../include/rapidxml_1.13/rapidxml.hpp"
+#include "../include/library.h"
 
 #define DNA_x 6
 #define DNA_y 10
 
 #define DEU_x 6
 #define DEU_y 6
-using namespace std;
 
+#define nb_Arg 4
+using namespace std;
+using namespace rapidxml;
 // code is launch with the machine type "DEU" or "DNA" follow by the currency
 int main (int argc, char *argv[]) 
 {
 	int res = ERROR;
+	static bool isNFC = false;
 	static string customerInput;
 	static string machine;
 	static string currency;
-	static vector<vector <float> > v_product;
+	static string name;
+	static float insertedMoney , productPrice;
+	static int productNumber;
+	xml_document<> doc;
+	static xml_node<> * root_node;
 	if(argc < 3)
 	{
 		cout << " arguments are missing " << endl;
@@ -42,81 +49,96 @@ int main (int argc, char *argv[])
 		cout << "error while setting the hardware"<< endl;
 	}
 	
-	res = setMachineConfig (machine, &v_product);
+	
+	if(0 == machine.compare("DEU"))
+	{		
+		ifstream file ("./productsFile/DEU_Products_Price.xml");		
+		vector<char> buffer((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+		buffer.push_back('\0');
+		doc.parse<0>(&buffer[0]);
+		root_node = doc.first_node("Distributech_EU");
+		file.close();
+	}	
+	else if(0 == machine.compare("DNA"))
+	{
+		ifstream file ("./productsFile/DNA_Products_Price.xml");
+		vector<char> buffer((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+		buffer.push_back('\0');
+		doc.parse<0>(&buffer[0]);
+		root_node = doc.first_node("Distributech_NA");
+		file.close();
+	}
+	
+
+	res = setMachineConfig (machine, root_node);
 	// First argument is coin value or "NFC"
 	// if NFC, third is employee name or "technician"
 	while(1)
 	{
-		cout << "Insert Coin or present NFC + name" << endl;
-		cin >> customerInput >> name;
-	}
-	
+		cout << "Select product number (0 for coffee) or present NFC" << endl;
+		cin >> customerInput;
+
+		if(is_number(customerInput)) 
+		{
+			isNFC = false;
+			productNumber = stoi(customerInput);
+		}
+		else if(customerInput.compare("NFC"))
+		{
+			isNFC = true;
+		}
+		else
+		{
+			cout << "Wrong entry" << endl;
+			res = ERROR;
+			break;
+		}
+		
+		// in case no NFC ask find the price then ask for it		
+		if(!isNFC)
+		{
+			res = findProductPrice(productNumber,root_node, &productPrice);
+			cout << "Price is : " << productPrice  << endl;
+			cout << "Insert money "<< endl;
+			cin >> customerInput;
+			if(is_number(customerInput)) 
+			{
+				insertedMoney = stof(customerInput);
+			}
+			else
+			{
+				cout << "Wrong entry" << endl;
+				res = ERROR;
+				break;
+			}
+		}			
+		
+		cout << insertedMoney << "  " << productNumber << endl;
+		customerInput = "";
+	}	
 }
 
-int setMachineConfig (string machine, vector<vector <float> > *v_product)
+int setMachineConfig (string machine, xml_node<> * root_node)
 {
 	int res = ERROR;
 	vector <float> vecRow;	
-	ifstream file;
 	string temp;
+	
+
+		
+	cout <<  machine << endl;
 	// This part will get the reference file with the associated price for each product
 	if(0 == machine.compare("DEU"))
-	{
-		file.open("./productsFile/DEU_Products_Price.txt", ios::in);
-		if(!file.is_open())
-		{
-			cout << "File not found!";
-			res = ERROR;
-		}
-		else
-		{
-			for(int i = 0; i < DEU_x; i++){
-				for(int j = 0; j < DEU_y; j++){
-					
-					getline(file, temp, ',');
-					
-					vecRow.push_back(stof(temp));
-				}
-				for (auto& it : vecRow) {
-					cout << it << " ";
-				}
-				v_product->push_back(vecRow);
-				vecRow.clear();
-				cout << endl;
-			}	
-		}
-	}
+		res = machineDisplay_EU (root_node );
+	
 	else if(0 == machine.compare("DNA"))
 	{
-		file.open("./productsFile/DNA_Products_Price.txt", ios::in);
- 		if(!file.is_open())
-		{
-			cout << "File not found!";
-			res = ERROR;
-		}
-		else
-		{
-			for(int i = 0; i < DNA_x; i++){
-				for(int j = 0; j < DNA_y; j++){
-					
-					getline(file, temp, ',');
-					
-					vecRow.push_back(stof(temp));
-				}
-				for (auto& it : vecRow) {
-					cout << it << " ";
-				}
-				v_product->push_back(vecRow);
-				vecRow.clear();
-				cout << endl;
-			}	
-		}
+		res = machineDisplay_NA (root_node);
 	}
 	else
 	{
 		cout << "Machine does not exist" << endl;
 		res = ERROR;
 	}
-	file.close();
 	return res;
 }

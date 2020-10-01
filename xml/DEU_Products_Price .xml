@@ -1,0 +1,146 @@
+<Distributech_EU>
+    <product name="coffee">
+       <price>0.5</price>
+       <quantity>5</quantity>
+    </product>
+    <product name="product1">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product2">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product3">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product4">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product5">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product6">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product7">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product8">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product9">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product10">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product11">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product12">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product13">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product14">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product15">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product16">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product17">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product18">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product19">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product20">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product21">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product22">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product23">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product24">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product25">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product26">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product27">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product28">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product29">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product30">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+    <product name="product31">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product32">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product33">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product34">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+	<product name="product35">
+      <price>0.5</price>
+      <quantity>5</quantity>
+    </product>
+</Distributech_EU>
