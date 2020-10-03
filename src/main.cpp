@@ -71,7 +71,17 @@ int main (int argc, char *argv[])
 
 
     res = setMachineConfig (machine, root_node,distributech);
+    if(SUCCESS != res)
+    {
+        cout << "Error while setting hardware" << endl;
+        return res;
+    }
     res = distributech.initQuantityVector(root_node);
+    if(SUCCESS != res)
+    {
+        cout << "Error initializing quantity" << endl;
+        return res;
+    }
     // First argument is coin value or "NFC"
 
     while(1)
@@ -85,6 +95,11 @@ int main (int argc, char *argv[])
                 cout << "Enter Name" << endl;
                 cin >> name;
                 res = findEmployeeName (name, &employeePrivilege);
+                if(SUCCESS != res)
+                {
+                    cout << "Employee file could not be open" << endl;
+                    return res;
+                }
                 if(technician_ID == employeePrivilege)
                 {
                     cout << "Enter 1 to activate the machine"<< endl;
@@ -123,6 +138,11 @@ int main (int argc, char *argv[])
             cout << " Employee name "<< endl;
             cin >> name;
             res = findEmployeeName (name, &employeePrivilege);
+            if(SUCCESS != res)
+            {
+                cout << "Employee file could not be open" << endl;
+                return res;
+            }
             if(technician_ID != employeePrivilege)
             {
                 if(0 == employeePrivilege)
@@ -142,11 +162,21 @@ int main (int argc, char *argv[])
         if(technician_ID != employeePrivilege)
         {
             res = distributech.getQuantity(productNumber,&productQuantity);
+            if(SUCCESS != res)
+            {
+                cout << "Quantity could not be get" << endl;
+                return res;
+            }
             if(productQuantity > 0)
             {
                 if(!isNFC || (isNFC && (0 != productNumber)))
                 {
                     res = distributech.findProductPrice(productNumber,root_node, &productPrice);
+                    if(SUCCESS != res)
+                    {
+                        cout << "Price could not be found" << endl;
+                        return res;
+                    }
                     cout << "Price is : " << productPrice  << endl;
                     cout << "Insert money "<< endl;
                     while(0 < (productPrice - insertedMoney) )
@@ -198,16 +228,20 @@ int main (int argc, char *argv[])
                 
                 case 3:
                     res = distributech.initQuantityVector(root_node);
-                    int q;
-                    res = distributech.getQuantity(0, &q);
-                    cout << q <<endl;
+                    if(SUCCESS != res)
+                    {
+                        cout << "Quantity vector could not be initialized" << endl;
+                        return res;
+                    }
                     break;
+
                 default:
                     break;
             }
         }
         customerInput = "";
     } // END WHILE 1
+    return res;
 } // END MAIN
 
 
