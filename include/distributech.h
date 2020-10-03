@@ -16,7 +16,6 @@ class Distributech
 		int getQuantity(int productNumber,int *productQuantity);
 		int initQuantityVector(xml_node<> * root_node);
 		int setQuantity(int productNumber,int productQuantity);
-
 };
 
 #endif

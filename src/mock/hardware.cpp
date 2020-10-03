@@ -1,5 +1,5 @@
 #include <string>
-#include "../include/error_variables.h"
+#include "../include/variables.h"
 using namespace std;
 
 int set_Hardware(string currency)

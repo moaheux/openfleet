@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include "../include/library.h"
-#include "../include/error_variables.h"
+#include "../include/variables.h"
 
 bool is_number(const std::string& s)
 {

@@ -12,4 +12,6 @@
 
 #define nb_Arg 4
 
+#define technician_ID 2
+#define employee_ID 1
 #endif

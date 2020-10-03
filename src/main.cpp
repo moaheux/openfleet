@@ -23,9 +23,10 @@ int main (int argc, char *argv[])
     static string name;
     static float insertedMoney(0.0f), change , productPrice;
     static int productNumber, productQuantity;
-	Distributech distributech;
+    Distributech distributech;
     xml_document<> doc;
     static xml_node<> * root_node;
+    static int employeePrivilege =0;
     if(argc < 3)
     {
         cout << " arguments are missing " << endl;
@@ -66,7 +67,7 @@ int main (int argc, char *argv[])
 
 
     res = setMachineConfig (machine, root_node,distributech);
-	res = distributech.initQuantityVector(root_node);
+    res = distributech.initQuantityVector(root_node);
     // First argument is coin value or "NFC"
 
     while(1)
@@ -79,7 +80,7 @@ int main (int argc, char *argv[])
             isNFC = false;
             productNumber = stoi(customerInput);
         }
-        else if(customerInput.compare("NFC"))
+        else if(0 == customerInput.compare("NFC"))
         {
             isNFC = true;
         }
@@ -90,11 +91,16 @@ int main (int argc, char *argv[])
             break;
         }
         
-        // normaly the employee ID is part of the NFC in our case you haqve to enter the name
+        // normaly the employee ID is part of the NFC in our case you have to enter the name
         if(isNFC)
         {
             cout << " Employee name "<< endl;
             cin >> name;
+            res = findEmployeeName (name, &employeePrivilege);
+            if(0 == employeePrivilege)
+            {
+                isNFC = false;
+            }
             cout << "Select product number (0 for coffee)" <<endl;
             cin >> customerInput;
 
@@ -105,7 +111,7 @@ int main (int argc, char *argv[])
         }
 
         //res = distributech.findProductQuantity(productNumber,root_node, &productQuantity);
-		res = distributech.getQuantity(productNumber,&productQuantity);
+        res = distributech.getQuantity(productNumber,&productQuantity);
         if(productQuantity > 0)
         {
             if(!isNFC || (isNFC && (0 != productNumber)))
@@ -132,8 +138,8 @@ int main (int argc, char *argv[])
                 }
             }
             
-            // TO DO Serve product
-            // substract quantity
+            serve_Product();
+            distributech.setQuantity(productNumber,productQuantity -1);
         }
         else
         {
@@ -141,7 +147,7 @@ int main (int argc, char *argv[])
         }
 
         customerInput = "";
-    }	
+    }
 }
 
 
@@ -149,7 +155,7 @@ int main (int argc, char *argv[])
 int setMachineConfig (string machine, xml_node<> * root_node, Distributech distributech)
 {
     int res = ERROR;
-    vector <float> vecRow;	
+    vector <float> vecRow;
     string temp;
 
 
@@ -166,6 +172,43 @@ int setMachineConfig (string machine, xml_node<> * root_node, Distributech distr
     {
         cout << "Machine does not exist" << endl;
         res = ERROR;
-    }	
+    }
     return res;
+}
+
+int findEmployeeName (string employee, int *employeePrivilege) 
+{
+
+    string substring;   // declaring subtring variable.
+
+    ifstream file_text ("./employee/Employees.txt");  // creating file_text object of ifstream type.
+
+    string x;
+    *employeePrivilege = 0;
+    
+    if (file_text.is_open())       //is_open open the text file.
+    {
+        while ( getline (file_text,x) )
+        {
+            if (x.find(employee, 0) != string::npos) 
+            {
+                if(0 == employee.compare("technician"))
+                    *employeePrivilege = technician_ID;
+                else
+                    *employeePrivilege = employee_ID;
+                break;
+            }
+
+        }
+        file_text.close(); //to close text file.
+
+    }
+    else
+    {
+        cout << "Unable to open file";
+        return ERROR;
+    }
+
+    cout << "employeePrivilege  " << *employeePrivilege << endl;
+    return SUCCESS;
 }
