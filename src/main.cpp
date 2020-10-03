@@ -4,18 +4,12 @@
 #include <fstream>
 #include <sstream>
 #include "../include/mock/hardware.h"
-#include "../include/error_variables.h"
+#include "../include/variables.h"
 #include "../include/main.h"
 #include "../include/rapidxml_1.13/rapidxml.hpp"
 #include "../include/library.h"
+#include "../include/distributech.h"
 
-#define DNA_x 6
-#define DNA_y 10
-
-#define DEU_x 6
-#define DEU_y 6
-
-#define nb_Arg 4
 using namespace std;
 using namespace rapidxml;
 // code is launch with the machine type "DEU" or "DNA" follow by the currency
@@ -29,6 +23,7 @@ int main (int argc, char *argv[])
     static string name;
     static float insertedMoney(0.0f), change , productPrice;
     static int productNumber, productQuantity;
+	Distributech distributech;
     xml_document<> doc;
     static xml_node<> * root_node;
     if(argc < 3)
@@ -70,7 +65,8 @@ int main (int argc, char *argv[])
     }
 
 
-    res = setMachineConfig (machine, root_node);
+    res = setMachineConfig (machine, root_node,distributech);
+	res = distributech.initQuantityVector(root_node);
     // First argument is coin value or "NFC"
 
     while(1)
@@ -108,12 +104,13 @@ int main (int argc, char *argv[])
             }
         }
 
-        res = findProductQuantity(productNumber,root_node, &productQuantity);
+        //res = distributech.findProductQuantity(productNumber,root_node, &productQuantity);
+		res = distributech.getQuantity(productNumber,&productQuantity);
         if(productQuantity > 0)
         {
             if(!isNFC || (isNFC && (0 != productNumber)))
             {
-                res = findProductPrice(productNumber,root_node, &productPrice);
+                res = distributech.findProductPrice(productNumber,root_node, &productPrice);
                 cout << "Price is : " << productPrice  << endl;
                 cout << "Insert money "<< endl;
                 while(0 < (productPrice - insertedMoney) )
@@ -145,10 +142,12 @@ int main (int argc, char *argv[])
 
         customerInput = "";
     }	
-    }
+}
 
-    int setMachineConfig (string machine, xml_node<> * root_node)
-    {
+
+
+int setMachineConfig (string machine, xml_node<> * root_node, Distributech distributech)
+{
     int res = ERROR;
     vector <float> vecRow;	
     string temp;
@@ -157,16 +156,16 @@ int main (int argc, char *argv[])
     cout <<  machine << endl;
     // This part will get the reference file with the associated price for each product
     if(0 == machine.compare("DEU"))
-        res = machineDisplay_EU (root_node );
+        res = distributech.machineDisplay_EU (root_node );
 
     else if(0 == machine.compare("DNA"))
     {
-        res = machineDisplay_NA (root_node);
+        res = distributech.machineDisplay_NA (root_node);
     }
     else
     {
         cout << "Machine does not exist" << endl;
         res = ERROR;
-    }
+    }	
     return res;
-    }
+}

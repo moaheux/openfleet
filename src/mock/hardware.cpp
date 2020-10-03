@@ -7,3 +7,8 @@ int set_Hardware(string currency)
 	/* Do some hardware stuff */
 	return SUCCESS;
 }
+
+int serve_Product()
+{
+	return SUCCESS;
+}
