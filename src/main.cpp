@@ -17,6 +17,7 @@ int main (int argc, char *argv[])
 {
     int res = ERROR;
     static bool isNFC = false;
+    static bool isActivated = true;
     static string customerInput;
     static string machine;
     static string currency;
@@ -27,6 +28,9 @@ int main (int argc, char *argv[])
     xml_document<> doc;
     static xml_node<> * root_node;
     static int employeePrivilege =0;
+
+    static int operation_mode ;
+
     if(argc < 3)
     {
         cout << " arguments are missing " << endl;
@@ -72,6 +76,28 @@ int main (int argc, char *argv[])
 
     while(1)
     {
+        while(!isActivated) 
+        {
+            cout << "Machine Deactivated Technician must present NFC" << endl;
+            cin >> customerInput;
+            if(0 == customerInput.compare("NFC"))
+            {
+                cout << "Enter Name" << endl;
+                cin >> name;
+                res = findEmployeeName (name, &employeePrivilege);
+                if(technician_ID == employeePrivilege)
+                {
+                    cout << "Enter 1 to activate the machine"<< endl;
+                    cin >> customerInput;
+                    if( 0 == customerInput.compare("1"))
+                    {
+                        isActivated = true;
+                        employeePrivilege = 0;
+                    }
+                }
+            }
+        }
+
         cout << "Select product number (0 for coffee) or present NFC" << endl;
         cin >> customerInput;
 
@@ -97,58 +123,92 @@ int main (int argc, char *argv[])
             cout << " Employee name "<< endl;
             cin >> name;
             res = findEmployeeName (name, &employeePrivilege);
-            if(0 == employeePrivilege)
+            if(technician_ID != employeePrivilege)
             {
-                isNFC = false;
-            }
-            cout << "Select product number (0 for coffee)" <<endl;
-            cin >> customerInput;
+                if(0 == employeePrivilege)
+                {
+                    isNFC = false;
+                }
+                cout << "Select product number (0 for coffee)" <<endl;
+                cin >> customerInput;
 
-            if(is_number(customerInput)) 
-            {
-                productNumber = stoi(customerInput);
+                if(is_number(customerInput)) 
+                {
+                    productNumber = stoi(customerInput);
+                }
             }
         }
 
-        //res = distributech.findProductQuantity(productNumber,root_node, &productQuantity);
-        res = distributech.getQuantity(productNumber,&productQuantity);
-        if(productQuantity > 0)
+        if(technician_ID != employeePrivilege)
         {
-            if(!isNFC || (isNFC && (0 != productNumber)))
+            res = distributech.getQuantity(productNumber,&productQuantity);
+            if(productQuantity > 0)
             {
-                res = distributech.findProductPrice(productNumber,root_node, &productPrice);
-                cout << "Price is : " << productPrice  << endl;
-                cout << "Insert money "<< endl;
-                while(0 < (productPrice - insertedMoney) )
+                if(!isNFC || (isNFC && (0 != productNumber)))
                 {
-                    cin >> customerInput;
-                    if(is_number(customerInput)) 
+                    res = distributech.findProductPrice(productNumber,root_node, &productPrice);
+                    cout << "Price is : " << productPrice  << endl;
+                    cout << "Insert money "<< endl;
+                    while(0 < (productPrice - insertedMoney) )
                     {
-                        insertedMoney += stof(customerInput);
-                        change = productPrice - insertedMoney;
-                        if(0 < change)
-                            cout << "Remaining  :" << change <<endl;
+                        cin >> customerInput;
+                        if(is_number(customerInput)) 
+                        {
+                            insertedMoney += stof(customerInput);
+                            change = productPrice - insertedMoney;
+                            if(0 < change)
+                                cout << "Remaining  :" << change <<endl;
+                        }
+                        else
+                        {
+                            cout << "Wrong entry" << endl;
+                            res = ERROR;
+                            break;
+                        }
                     }
-                    else
-                    {
-                        cout << "Wrong entry" << endl;
-                        res = ERROR;
-                        break;
-                    }
+                    insertedMoney = 0.0f;
                 }
+                
+                serve_Product();
+                distributech.setQuantity(productNumber,productQuantity -1);
             }
-            
-            serve_Product();
-            distributech.setQuantity(productNumber,productQuantity -1);
+            else
+            {
+                cout << "Product Not Available" << endl;
+            }
         }
         else
         {
-            cout << "Product Not Available" << endl;
-        }
+            cout << "technician Maintenance !!!" << endl;
+            cout << "Select 1 to de activate Distribution" << endl;
+            cout << "Select 2 to reset change in machine" << endl;
+            cout << "Select 3 to reset product qauntity in machine" << endl;
+            cin >> customerInput;
+            if(is_number(customerInput)) 
+                operation_mode = stoi(customerInput);
 
+            switch(operation_mode)
+            {
+                case 1:
+                    isActivated = false;
+                    break;
+                   
+                case 2:
+                    break;
+                
+                case 3:
+                    res = distributech.initQuantityVector(root_node);
+                    int q;
+                    res = distributech.getQuantity(0, &q);
+                    cout << q <<endl;
+                    break;
+                default:
+                    break;
+            }
+        }
         customerInput = "";
-    }
-}
+    } // END WHILE 1
+} // END MAIN
 
 
 
@@ -209,6 +269,5 @@ int findEmployeeName (string employee, int *employeePrivilege)
         return ERROR;
     }
 
-    cout << "employeePrivilege  " << *employeePrivilege << endl;
     return SUCCESS;
 }

@@ -33,7 +33,7 @@ int Distributech::machineDisplay_EU (xml_node<> * root_node )
             col_count ++;
         }
     }
-	return SUCCESS;
+    return SUCCESS;
 }
 
 int Distributech::machineDisplay_NA (xml_node<> * root_node )
@@ -103,23 +103,24 @@ int Distributech::findProductQuantity(int productNumber,xml_node<> * root_node, 
 
 int Distributech::initQuantityVector(xml_node<> * root_node)
 {
-	int res;
-	for (xml_node<> * product_node = root_node->first_node("product"); product_node; product_node = product_node->next_sibling())
+    int res;
+    quantity.clear();
+    for (xml_node<> * product_node = root_node->first_node("product"); product_node; product_node = product_node->next_sibling())
     {
         xml_node<> * quantity_node = product_node->first_node("quantity");
         quantity.push_back(stoi(quantity_node->value()));
-	}
-	return SUCCESS;
+    }
+    return SUCCESS;
 }
 
 int Distributech::getQuantity(int productNumber,int *productQuantity)
 {
-	*productQuantity = quantity.at(productNumber);
-	return SUCCESS;
+    *productQuantity = quantity.at(productNumber);
+    return SUCCESS;
 }
 
 int Distributech::setQuantity(int productNumber,int productQuantity)
 {
-	quantity.at(productNumber) = productQuantity;
-	return SUCCESS;
+    quantity.at(productNumber) = productQuantity;
+    return SUCCESS;
 }
